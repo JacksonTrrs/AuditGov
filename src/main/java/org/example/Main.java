@@ -7,6 +7,10 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         Teste teste = new Teste();
         Teste.testeTratamentoDados();
+        
+        // Descomente a linha abaixo para testar a gestão de entidades únicas (sinônimos)
+        Teste.testeGestaoEntidadesUnicas();
+        
         //teste.excetuarImportacao("D:\\Programação\\Período IV (2025.2) () - ADS IFPB\\Banco de Dados 2\\Projeto 2\\Base Dados\\2025_Viagem.csv");
     }
 }
