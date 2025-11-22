@@ -58,7 +58,7 @@ public class Teste {
     public static void testeGestaoEntidadesUnicas() throws SQLException {
         System.out.println("\n=== TESTE: Gestão de Entidades Únicas (Sinônimos) ===\n");
         
-        DadosDAO dao = new DadosDAO();
+        GestaoEntidadesUnicas gestao = new GestaoEntidadesUnicas();
         
         try (Connection conn = ConexaoFactory.getConexao()) {
             conn.setAutoCommit(false);
@@ -66,16 +66,16 @@ public class Teste {
             // Teste 1: Inserir órgão pela primeira vez
             System.out.println("Teste 1: Inserindo 'MINISTERIO DA SAUDE' pela primeira vez...");
             Orgao orgao1 = new Orgao("MINISTERIO DA SAUDE");
-            int id1 = dao.salvarOuRecuperarOrgao(conn, orgao1);
+            int id1 = gestao.salvarOuRecuperarOrgao(conn, orgao1);
             System.out.println("  -> ID retornado: " + id1);
-            System.out.println("  -> Cache de órgãos: " + DadosDAO.tamanhoCacheOrgaos() + " entidade(s)");
+            System.out.println("  -> Cache de órgãos: " + gestao.tamanhoCacheOrgaos() + " entidade(s)");
             
             // Teste 2: Tentar inserir o mesmo órgão com formatação diferente
             System.out.println("\nTeste 2: Tentando inserir 'ministerio da saude' (minúsculas)...");
             Orgao orgao2 = new Orgao("ministerio da saude");
-            int id2 = dao.salvarOuRecuperarOrgao(conn, orgao2);
+            int id2 = gestao.salvarOuRecuperarOrgao(conn, orgao2);
             System.out.println("  -> ID retornado: " + id2);
-            System.out.println("  -> Cache de órgãos: " + DadosDAO.tamanhoCacheOrgaos() + " entidade(s)");
+            System.out.println("  -> Cache de órgãos: " + gestao.tamanhoCacheOrgaos() + " entidade(s)");
             
             if (id1 == id2) {
                 System.out.println("  ✓ SUCESSO: Mesmo ID retornado! Duplicata evitada.");
@@ -86,7 +86,7 @@ public class Teste {
             // Teste 3: Tentar inserir com espaços extras
             System.out.println("\nTeste 3: Tentando inserir '  MINISTERIO DA SAUDE  ' (com espaços)...");
             Orgao orgao3 = new Orgao("  MINISTERIO DA SAUDE  ");
-            int id3 = dao.salvarOuRecuperarOrgao(conn, orgao3);
+            int id3 = gestao.salvarOuRecuperarOrgao(conn, orgao3);
             System.out.println("  -> ID retornado: " + id3);
             
             if (id1 == id3) {
@@ -98,13 +98,13 @@ public class Teste {
             // Teste 4: Testar com cidade
             System.out.println("\nTeste 4: Inserindo cidade 'BRASILIA/DF' pela primeira vez...");
             Cidade cidade1 = new Cidade("BRASILIA", "DF");
-            int idCidade1 = dao.salvarOuRecuperarCidade(conn, cidade1);
+            int idCidade1 = gestao.salvarOuRecuperarCidade(conn, cidade1);
             System.out.println("  -> ID retornado: " + idCidade1);
-            System.out.println("  -> Cache de cidades: " + DadosDAO.tamanhoCacheCidades() + " entidade(s)");
+            System.out.println("  -> Cache de cidades: " + gestao.tamanhoCacheCidades() + " entidade(s)");
             
             System.out.println("\nTeste 5: Tentando inserir 'brasilia/df' (minúsculas)...");
             Cidade cidade2 = new Cidade("brasilia", "df");
-            int idCidade2 = dao.salvarOuRecuperarCidade(conn, cidade2);
+            int idCidade2 = gestao.salvarOuRecuperarCidade(conn, cidade2);
             System.out.println("  -> ID retornado: " + idCidade2);
             
             if (idCidade1 == idCidade2) {
@@ -118,7 +118,7 @@ public class Teste {
             System.out.println("\n=== Rollback executado (dados de teste não foram salvos) ===");
             
             // Limpar cache após teste
-            DadosDAO.limparTodosCaches();
+            gestao.limparTodosCaches();
             System.out.println("Cache limpo.\n");
             
         } catch (SQLException e) {

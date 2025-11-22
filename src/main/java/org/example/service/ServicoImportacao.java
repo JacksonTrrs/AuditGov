@@ -16,6 +16,7 @@ public class ServicoImportacao {
 
     public void excetuarImportacao(String caminhoArquivo) throws SQLException {
         DadosDAO dao = new DadosDAO();
+        GestaoEntidadesUnicas gestaoEntidades = new GestaoEntidadesUnicas();
 
         System.out.println("Iniciando leitura de arquivo: " + caminhoArquivo);
 
@@ -77,15 +78,15 @@ public class ServicoImportacao {
                 String nomeCidade = localizacao[0];
                 String uf = localizacao[1];
 
-                // --- 3. PERSISTÊNCIA (DAO) ---
+                // --- 3. PERSISTÊNCIA (usando GestaoEntidadesUnicas) ---
                 try {
                     //Cria Objetos temporários
                     Orgao orgao = new Orgao(nomeOrgao);
                     Cidade cidade = new Cidade(nomeCidade, uf);
 
-                    //Recupera IDs do banco
-                    int idOrgao = dao.salvarOuRecuperarOrgao(conn, orgao);
-                    int idCidade = dao.salvarOuRecuperarCidade(conn, cidade);
+                    //Recupera IDs do banco (usando gestão de entidades únicas)
+                    int idOrgao = gestaoEntidades.salvarOuRecuperarOrgao(conn, orgao);
+                    int idCidade = gestaoEntidades.salvarOuRecuperarCidade(conn, cidade);
 
                     // Atualiza os objetos com o ID correto
                     orgao.setId(idOrgao);
