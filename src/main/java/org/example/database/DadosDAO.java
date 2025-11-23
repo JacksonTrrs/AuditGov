@@ -110,40 +110,46 @@ public class DadosDAO {
         return gestao.salvarOuRecuperarCidade(conn, cidade);
     }
 
-    public void inserirViagem(Connection conn, Viagem viagem) {
+    public void inserirViagem(Connection conn, Viagem v) throws SQLException {
+        String sql = "INSERT INTO viagem (id_processo, data_inicio, valor_total, fk_orgao, fk_destino) VALUES (?, ?, ?, ?, ?)";
 
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, v.getIdProcesso());
+            ps.setDate(2, Date.valueOf(v.getDataInicio()));
+            ps.setDouble(3, v.getValorTotal());
+            ps.setInt(4, v.getOrgao().getId());
+            ps.setInt(5, v.getDestino().getId());
+            ps.executeUpdate();
+        }
     }
 
     //LISTA AS CIDADES MAIS VISITADAS POR UF
     public List<String> listarCidadesMaisVisitadasPorUF(Connection conn) throws SQLException {
+
         String sql = """
             SELECT 
                 c.uf,
                 c.nome AS cidade,
                 COUNT(*) AS total
             FROM viagem v
-            JOIN cidade c ON v.id_cidade = c.id
+            JOIN cidade c ON v.fk_destino = c.id
             GROUP BY c.uf, c.nome
             ORDER BY c.uf, total DESC;
         """;
 
-        List<String> resultado = new ArrayList<>();
+        List<String> lista = new ArrayList<>();
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                String linha = String.format(
-                    "%s - %s (%d viagens)",
-                    rs.getString("uf"),
-                    rs.getString("cidade"),
-                    rs.getInt("total")
-                );
-                resultado.add(linha);
+                String linha = rs.getString("uf") + " - " +
+                        rs.getString("cidade") + " (" +
+                        rs.getInt("total") + " viagens)";
+                lista.add(linha);
             }
         }
-
-        return resultado;
+        return lista;
     }
 
 
