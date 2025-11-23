@@ -111,5 +111,37 @@ public class DadosDAO {
     public void inserirViagem(Connection conn, Viagem viagem) {
 
     }
+
+    //LISTA AS CIDADES MAIS VISITADAS POR UF
+    public List<CidadeVisitaDTO> listarCidadesMaisVisitadasPorUF(Connection conn) throws SQLException {
+    
+    String sql =
+        "SELECT " +
+        "   TRIM(UPPER(c.nome)) AS cidade, " +
+        "   TRIM(UPPER(c.uf)) AS uf, " +
+        "   COUNT(*) AS total " +
+        "FROM viagem v " +
+        "JOIN cidade c ON c.id = v.idCidade " +
+        "GROUP BY TRIM(UPPER(c.nome)), TRIM(UPPER(c.uf)) " +
+        "ORDER BY uf, total DESC";
+
+    List<CidadeVisitaDTO> lista = new ArrayList<>();
+
+    try (PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            String cidade = rs.getString("cidade");
+            String uf = rs.getString("uf");
+            long total = rs.getLong("total");
+
+            lista.add(new CidadeVisitaDTO(cidade, uf, total));
+        }
+    }
+
+    return lista;
+}
+
+    
 }
 
