@@ -50,7 +50,7 @@ public class Teste {
     public static void testeTratamentoDados() {
         System.out.println(TratamentoDados.converterValor("1.500,00"));
     }
-
+    
     /**
      * Testa a gestão de entidades únicas (sinônimos)
      * Demonstra que órgãos e cidades duplicados não são inseridos novamente
@@ -127,4 +127,18 @@ public class Teste {
             throw e;
         }
     }
+    public static void testeRelatorioCidades() throws SQLException {
+        DadosDAO dao = new DadosDAO();
+
+        try (Connection conn = ConexaoFactory.getConexao()) {
+            var lista = dao.listarCidadesMaisVisitadasPorUF(conn);
+
+            System.out.println("\n=== Cidades Mais Visitadas (Agrupadas por UF) ===\n");
+
+            for (CidadeVisitaDTO c : lista) {
+                System.out.println(c);
+            }
+        }
+    }
+
 }
