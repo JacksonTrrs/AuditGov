@@ -128,17 +128,15 @@ public class Teste {
         }
     }
     public static void testeRelatorioCidades() throws SQLException {
-        DadosDAO dao = new DadosDAO();
-
         try (Connection conn = ConexaoFactory.getConexao()) {
-            var lista = dao.listarCidadesMaisVisitadasPorUF(conn);
+            DadosDAO dao = new DadosDAO();
 
-            System.out.println("\n=== Cidades Mais Visitadas (Agrupadas por UF) ===\n");
+            List<String> lista = dao.listarCidadesMaisVisitadasPorUF(conn);
 
-            for (CidadeVisitaDTO c : lista) {
-                System.out.println(c);
-            }
+            System.out.println("\n=== CIDADES MAIS VISITADAS POR UF ===\n");
+            lista.forEach(System.out::println);
         }
     }
+
 
 }
