@@ -3,6 +3,8 @@ package org.example.database;
 import org.example.model.*;
 
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Data Access Object (DAO) - Responsável apenas por operações SQL puras.
