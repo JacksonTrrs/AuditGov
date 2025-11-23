@@ -10,6 +10,8 @@ public class Main {
         
         // Descomente a linha abaixo para testar a gestão de entidades únicas (sinônimos)
         Teste.testeGestaoEntidadesUnicas();
+
+        Teste.testeRelatorioCidades();
         
         //teste.excetuarImportacao("D:\\Programação\\Período IV (2025.2) () - ADS IFPB\\Banco de Dados 2\\Projeto 2\\Base Dados\\2025_Viagem.csv");
     }
