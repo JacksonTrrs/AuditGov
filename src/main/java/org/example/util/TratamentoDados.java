@@ -4,16 +4,19 @@ import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.regex.Pattern;
 
 //Métodos estáticos de limpeza
 
 public class TratamentoDados {
 
     public static String semAcento(String texto) {
-        String nfdNormalizedString = Normalizer.normalize(texto, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(nfdNormalizedString).replaceAll("");
+        if (texto == null) {
+            return null;
+        }
+
+        return Normalizer
+                .normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
     public static String limparTexto(String texto) {
