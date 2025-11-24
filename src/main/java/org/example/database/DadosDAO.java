@@ -1,13 +1,15 @@
 package org.example.database;
 
-import org.example.model.*;
+import org.example.model.Cidade;
+import org.example.model.Orgao;
+import org.example.model.Viagem;
 
 import java.sql.*;
 
 /**
  * Data Access Object (DAO) - Responsável apenas por operações SQL puras.
  * Não contém lógica de negócio, cache ou normalização.
- * 
+ * <p>
  * Para gestão de entidades únicas (sinônimos), use a classe GestaoEntidadesUnicas.
  */
 public class DadosDAO {
@@ -28,7 +30,7 @@ public class DadosDAO {
         }
         return null;
     }
-    
+
     /**
      * Insere um novo órgão no banco de dados.
      * Retorna o ID gerado.
@@ -38,7 +40,7 @@ public class DadosDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, orgao.getNome().trim());
             stmt.executeUpdate();
-            
+
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -47,7 +49,7 @@ public class DadosDAO {
         }
         throw new SQLException("Erro ao inserir órgão: " + orgao.getNome());
     }
-    
+
     /**
      * Busca o ID de uma cidade pelo nome e UF normalizados.
      * Retorna null se não encontrar.
@@ -65,7 +67,7 @@ public class DadosDAO {
         }
         return null;
     }
-    
+
     /**
      * Insere uma nova cidade no banco de dados.
      * Retorna o ID gerado.
@@ -76,7 +78,7 @@ public class DadosDAO {
             stmt.setString(1, cidade.getNome().trim());
             stmt.setString(2, cidade.getUf().trim().toUpperCase());
             stmt.executeUpdate();
-            
+
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -108,8 +110,33 @@ public class DadosDAO {
         return gestao.salvarOuRecuperarCidade(conn, cidade);
     }
 
-    public void inserirViagem(Connection conn, Viagem viagem) {
+    /**
+     * Insere a viagem na tabela fato.
+     * Converte a data do Java para SQL e extrai os IDs dos objetos relacionados.
+     */
+    public void inserirViagem(Connection conn, Viagem viagem) throws SQLException {
+        String sql = "INSERT INTO viagem (id_processo, data_inicio, valor_total, fk_orgao, fk_destino) VALUES (?, ?, ?, ?, ?)";
 
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // 1. ID do Processo (Texto)
+            stmt.setString(1, viagem.getIdProcesso());
+
+            // 2. Data (Conversão Obrigatória: LocalDate -> java.sql.Date)
+            stmt.setDate(2, java.sql.Date.valueOf(viagem.getDataInicio()));
+
+            // 3. Valor Total
+            stmt.setDouble(3, viagem.getValorTotal());
+
+            // 4. FK Órgão (Pega o ID de dentro do objeto Orgao)
+            stmt.setInt(4, viagem.getOrgao().getId());
+
+            // 5. FK Destino (Pega o ID de dentro do objeto Cidade)
+            stmt.setInt(5, viagem.getDestino().getId());
+
+            // Executa
+            stmt.executeUpdate();
+        }
     }
 }
 

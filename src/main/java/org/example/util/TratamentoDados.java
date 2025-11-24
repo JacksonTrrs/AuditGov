@@ -1,21 +1,32 @@
 package org.example.util;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.regex.Pattern;
 
 //Métodos estáticos de limpeza
 
 public class TratamentoDados {
 
+    public static String semAcento(String texto) {
+        String nfdNormalizedString = Normalizer.normalize(texto, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(nfdNormalizedString).replaceAll("");
+    }
+
     public static String limparTexto(String texto) {
         if (texto == null) return "";
 
-        //1. Remove aspas duplas que vêm do CSV
-        String textoLimpo = texto.replace("\"", "");
+        //1. Remove espaços do começo do fim e aspas duplas que vêm do CSV
+        String textoLimpo = texto.replace("\"", "").trim();
 
-        //2. Remove espaços do começo e fim e deixa maiúsculo (Padronização)
-        return textoLimpo.trim().toUpperCase();
+        //2. Remove acentos
+        textoLimpo = semAcento(textoLimpo);
+
+        //3. Remove e deixa maiúsculo (Padronização)
+        return textoLimpo.toUpperCase();
     }
 
     public static Double converterValor(String valorBruto) {
@@ -44,8 +55,8 @@ public class TratamentoDados {
         }
     }
 
-//PRÓXIMA MELHORIA REMOVER ACENTOS
     public static String[] separarCidadeUF(String destinoBruto) {
+        // ATUALIZE O MÉTODO SEPARARCIDA DE UF PARA USAR A GUILHOTINA
         //Valores padrão caso venha vazio
         String cidade = "INDEFINIDO";
         String uf = "XX";
@@ -67,8 +78,21 @@ public class TratamentoDados {
                 // Se não tiver barra, assume que tudo é o nome da cidade
                 cidade = limpo;
             }
+
+            // --- AQUI ESTÁ A PROTEÇÃO ---
+            // Garante que a UF nunca tenha mais de 2 letras (corta o excesso)
+            // Ex: " PB" vira "PB", "PARAÍBA" vira "PA"
+            if (uf.length() > 2) {
+                uf = uf.substring(0, 2);
+            }
+
+            // Garante que a cidade não exploda o banco
+            cidade = limitarTexto(cidade, 150);
+
+            return new String[]{cidade, uf};
+
         }
-        return new String[]{cidade,uf};
+        return new String[]{cidade, uf};
     }
 
     public static LocalDate converterData(String dataBruta) {
@@ -88,5 +112,13 @@ public class TratamentoDados {
             return LocalDate.now();
         }
 
+    }
+
+    private static String limitarTexto(String texto, int tamanhoMaximo) {
+        if (texto == null) return "";
+        if (texto.length() > tamanhoMaximo) {
+            return texto.substring(0, tamanhoMaximo);
+        }
+        return texto;
     }
 }

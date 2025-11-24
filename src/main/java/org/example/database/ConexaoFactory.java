@@ -13,7 +13,6 @@ public class ConexaoFactory {
     private static final String SENHA = ""; //configure a senha
 
     public static Connection getConexao() throws SQLException {
-
         //O DriverManager é quem pega o jar do MariaDB e abre o túnel
         return DriverManager.getConnection(URL, USUARIO, SENHA);
     }
