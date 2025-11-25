@@ -1,14 +1,27 @@
 package org.example;
 
-import org.example.service.ServicoImportacao;
+import org.example.ui.TelaPrincipal;
 
-import java.sql.SQLException;
+import javax.swing.*;
 
+/**
+ * Classe principal da aplicação AuditGov.
+ * Inicia a interface gráfica do sistema.
+ */
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
-        ServicoImportacao.excetuarImportacao("D:\\Programação\\Período IV (2025.2) () - ADS IFPB\\Banco de Dados 2\\Projeto 2\\Base Dados\\2025_Viagem.csv");
+    public static void main(String[] args) {
+        // Inicia a interface gráfica
+        SwingUtilities.invokeLater(() -> {
+            try {
+                new TelaPrincipal().setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, 
+                    "Erro ao iniciar aplicação: " + e.getMessage(), 
+                    "Erro", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
-
-
 }

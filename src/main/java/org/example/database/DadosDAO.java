@@ -138,5 +138,158 @@ public class DadosDAO {
             stmt.executeUpdate();
         }
     }
+
+    /**
+     * Busca viagens com informações de órgão e cidade.
+     * O DAO aceita ordenação como parâmetro, mas não decide qual ordenação usar.
+     * A decisão de ordenação é responsabilidade da camada de serviço.
+     * 
+     * @param orderBy Cláusula ORDER BY (ex: "v.data_inicio DESC"). Pode ser null para sem ordenação.
+     */
+    public java.util.List<Viagem> buscarViagens(Connection conn, String orderBy, int limite, int offset) throws SQLException {
+        java.util.List<Viagem> viagens = new java.util.ArrayList<>();
+        String sql = "SELECT v.id_processo, v.data_inicio, v.valor_total, " +
+                     "o.id as orgao_id, o.nome as orgao_nome, " +
+                     "c.id as cidade_id, c.nome as cidade_nome, c.uf " +
+                     "FROM viagem v " +
+                     "INNER JOIN orgao o ON v.fk_orgao = o.id " +
+                     "INNER JOIN cidade c ON v.fk_destino = c.id " +
+                     (orderBy != null && !orderBy.isEmpty() ? "ORDER BY " + orderBy + " " : "") +
+                     "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, limite);
+            stmt.setInt(2, offset);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Construção de objetos de domínio - responsabilidade do DAO
+                    // (padrão comum em DAOs, desde que não contenha lógica de negócio)
+                    Orgao orgao = new Orgao(rs.getString("orgao_nome"));
+                    orgao.setId(rs.getInt("orgao_id"));
+
+                    Cidade cidade = new Cidade(rs.getString("cidade_nome"), rs.getString("uf"));
+                    cidade.setId(rs.getInt("cidade_id"));
+
+                    Viagem viagem = new Viagem(
+                            rs.getString("id_processo"),
+                            rs.getDate("data_inicio").toLocalDate(),
+                            rs.getDouble("valor_total"),
+                            orgao,
+                            cidade
+                    );
+                    viagens.add(viagem);
+                }
+            }
+        }
+        return viagens;
+    }
+
+    /**
+     * Conta o total de viagens no banco de dados.
+     */
+    public int contarViagens(Connection conn) throws SQLException {
+        String sql = "SELECT COUNT(*) as total FROM viagem";
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Busca dados brutos de estatísticas das viagens.
+     * Retorna um array com os valores calculados pelo banco na ordem:
+     * [total_viagens, valor_total, valor_medio, valor_minimo, valor_maximo]
+     * A estrutura e nomes dos campos retornados são definidos pela camada de serviço.
+     */
+    public Object[] buscarDadosEstatisticas(Connection conn) throws SQLException {
+        String sql = "SELECT " +
+                     "COUNT(*) as total_viagens, " +
+                     "SUM(valor_total) as valor_total, " +
+                     "AVG(valor_total) as valor_medio, " +
+                     "MIN(valor_total) as valor_minimo, " +
+                     "MAX(valor_total) as valor_maximo " +
+                     "FROM viagem";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return new Object[]{
+                    rs.getLong("total_viagens"),
+                    rs.getDouble("valor_total"),
+                    rs.getDouble("valor_medio"),
+                    rs.getDouble("valor_minimo"),
+                    rs.getDouble("valor_maximo")
+                };
+            }
+        }
+        // Retorna valores zerados se não houver dados
+        return new Object[]{0L, 0.0, 0.0, 0.0, 0.0};
+    }
+
+    /**
+     * Busca dados brutos dos órgãos com maior soma de valor total.
+     * Retorna uma lista de arrays [nome_orgao, valor_total] ordenados por valor_total DESC.
+     * O DAO não decide quantos retornar - isso é responsabilidade da camada de serviço.
+     * 
+     * @param limite Número máximo de órgãos a retornar
+     */
+    public java.util.List<Object[]> buscarDadosOrgaosMaioresGastadores(Connection conn, int limite) throws SQLException {
+        java.util.List<Object[]> resultados = new java.util.ArrayList<>();
+        String sql = "SELECT o.nome as nome_orgao, SUM(v.valor_total) as valor_total " +
+                     "FROM viagem v " +
+                     "INNER JOIN orgao o ON v.fk_orgao = o.id " +
+                     "GROUP BY o.id, o.nome " +
+                     "ORDER BY valor_total DESC " +
+                     "LIMIT ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, limite);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Retorna dados brutos: [nome_orgao, valor_total]
+                    resultados.add(new Object[]{
+                        rs.getString("nome_orgao"),
+                        rs.getDouble("valor_total")
+                    });
+                }
+            }
+        }
+        return resultados;
+    }
+
+    /**
+     * Busca dados brutos dos destinos mais frequentes agrupados por cidade e UF.
+     * Retorna uma lista de arrays [nome_cidade, uf, quantidade] ordenados por quantidade DESC.
+     * O DAO não decide quantos retornar - isso é responsabilidade da camada de serviço.
+     * 
+     * @param limite Número máximo de destinos a retornar
+     */
+    public java.util.List<Object[]> buscarDadosDestinosFrequentes(Connection conn, int limite) throws SQLException {
+        java.util.List<Object[]> resultados = new java.util.ArrayList<>();
+        String sql = "SELECT c.nome as nome_cidade, c.uf, COUNT(*) as quantidade " +
+                     "FROM viagem v " +
+                     "INNER JOIN cidade c ON v.fk_destino = c.id " +
+                     "GROUP BY c.id, c.nome, c.uf " +
+                     "ORDER BY quantidade DESC " +
+                     "LIMIT ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, limite);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Retorna dados brutos: [nome_cidade, uf, quantidade]
+                    resultados.add(new Object[]{
+                        rs.getString("nome_cidade"),
+                        rs.getString("uf"),
+                        rs.getInt("quantidade")
+                    });
+                }
+            }
+        }
+        return resultados;
+    }
 }
 
