@@ -8,9 +8,9 @@ import java.sql.SQLException;
 public class ConexaoFactory {
 
     // --- CONFIGURAÇÃO DO BANCO ---
-    private static final String URL = "jdbc:mariadb://localhost:3306/audit_gov"; //configure a porta
+    private static final String URL = "jdbc:mariadb://localhost:3307/audit_gov"; //configure a porta
     private static final String USUARIO = "root"; //configure o usuario
-    private static final String SENHA = ""; //configure a senha
+    private static final String SENHA = "987412365"; //configure a senha
 
     public static Connection getConexao() throws SQLException {
         //O DriverManager é quem pega o jar do MariaDB e abre o túnel
