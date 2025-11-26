@@ -1,7 +1,7 @@
 package org.example.ui;
 
-import org.example.dto.DestinoFrequente;
-import org.example.dto.OrgaoGastador;
+import org.example.dto.DestinoFrequenteDTO;
+import org.example.dto.OrgaoGastadorDTO;
 import org.example.model.Viagem;
 import org.example.ui.controller.ControllerPrincipal;
 
@@ -508,7 +508,7 @@ public class TelaPrincipal extends JFrame {
             .thenAccept(gastadores -> {
                 SwingUtilities.invokeLater(() -> {
                     int posicao = 1;
-                    for (OrgaoGastador gastador : gastadores) {
+                    for (OrgaoGastadorDTO gastador : gastadores) {
                         Object[] linha = {
                             posicao++,
                             gastador.getNomeOrgao(),
@@ -544,7 +544,7 @@ public class TelaPrincipal extends JFrame {
             .thenAccept(destinos -> {
                 SwingUtilities.invokeLater(() -> {
                     int posicao = 1;
-                    for (DestinoFrequente destino : destinos) {
+                    for (DestinoFrequenteDTO destino : destinos) {
                         Object[] linha = {
                             posicao++,
                             destino.getNomeCidade(),

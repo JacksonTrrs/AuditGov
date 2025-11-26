@@ -2,8 +2,8 @@ package org.example.ui.controller;
 
 import org.example.service.ServicoConsulta;
 import org.example.service.ServicoImportacao;
-import org.example.dto.DestinoFrequente;
-import org.example.dto.OrgaoGastador;
+import org.example.dto.DestinoFrequenteDTO;
+import org.example.dto.OrgaoGastadorDTO;
 import org.example.model.Viagem;
 
 import javax.swing.*;
@@ -97,7 +97,7 @@ public class ControllerPrincipal {
     /**
      * Busca maiores gastadores de forma assíncrona.
      */
-    public CompletableFuture<List<OrgaoGastador>> buscarMaioresGastadores(int quantidade) {
+    public CompletableFuture<List<OrgaoGastadorDTO>> buscarMaioresGastadores(int quantidade) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarMaioresGastadores(quantidade);
@@ -110,7 +110,7 @@ public class ControllerPrincipal {
     /**
      * Busca top 5 maiores gastadores de forma assíncrona.
      */
-    public CompletableFuture<List<OrgaoGastador>> buscarTop5MaioresGastadores() {
+    public CompletableFuture<List<OrgaoGastadorDTO>> buscarTop5MaioresGastadores() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarTop5MaioresGastadores();
@@ -123,7 +123,7 @@ public class ControllerPrincipal {
     /**
      * Busca destinos frequentes de forma assíncrona.
      */
-    public CompletableFuture<List<DestinoFrequente>> buscarDestinosFrequentes(int quantidade) {
+    public CompletableFuture<List<DestinoFrequenteDTO>> buscarDestinosFrequentes(int quantidade) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarDestinosFrequentes(quantidade);
@@ -136,7 +136,7 @@ public class ControllerPrincipal {
     /**
      * Busca top 10 destinos frequentes de forma assíncrona.
      */
-    public CompletableFuture<List<DestinoFrequente>> buscarTop10DestinosFrequentes() {
+    public CompletableFuture<List<DestinoFrequenteDTO>> buscarTop10DestinosFrequentes() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarTop10DestinosFrequentes();

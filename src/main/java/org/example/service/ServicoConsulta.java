@@ -2,8 +2,8 @@ package org.example.service;
 
 import org.example.database.ConexaoFactory;
 import org.example.database.DadosDAO;
-import org.example.dto.DestinoFrequente;
-import org.example.dto.OrgaoGastador;
+import org.example.dto.DestinoFrequenteDTO;
+import org.example.dto.OrgaoGastadorDTO;
 import org.example.model.Viagem;
 
 import java.sql.Connection;
@@ -79,17 +79,17 @@ public class ServicoConsulta {
      * @param quantidade Quantidade de órgãos a retornar (padrão: 5)
      * @return Lista de OrgaoGastador ordenada por valor total (maior para menor)
      */
-    public List<OrgaoGastador> buscarMaioresGastadores(int quantidade) throws SQLException {
+    public List<OrgaoGastadorDTO> buscarMaioresGastadores(int quantidade) throws SQLException {
         try (Connection conn = ConexaoFactory.getConexao()) {
             // Regra de negócio: busca os N maiores gastadores
             List<Object[]> dadosBrutos = dao.buscarDadosOrgaosMaioresGastadores(conn, quantidade);
             
             // Transforma dados brutos em objetos de domínio
-            List<OrgaoGastador> gastadores = new ArrayList<>();
+            List<OrgaoGastadorDTO> gastadores = new ArrayList<>();
             for (Object[] dados : dadosBrutos) {
                 String nomeOrgao = (String) dados[0];
                 double valorTotal = ((Number) dados[1]).doubleValue();
-                gastadores.add(new OrgaoGastador(nomeOrgao, valorTotal));
+                gastadores.add(new OrgaoGastadorDTO(nomeOrgao, valorTotal));
             }
             
             return gastadores;
@@ -99,7 +99,7 @@ public class ServicoConsulta {
     /**
      * Busca os 5 órgãos com maior soma de valor total (método de conveniência).
      */
-    public List<OrgaoGastador> buscarTop5MaioresGastadores() throws SQLException {
+    public List<OrgaoGastadorDTO> buscarTop5MaioresGastadores() throws SQLException {
         return buscarMaioresGastadores(5);
     }
 
@@ -110,18 +110,18 @@ public class ServicoConsulta {
      * @param quantidade Quantidade de destinos a retornar
      * @return Lista de DestinoFrequente ordenada por quantidade de viagens (maior para menor)
      */
-    public List<DestinoFrequente> buscarDestinosFrequentes(int quantidade) throws SQLException {
+    public List<DestinoFrequenteDTO> buscarDestinosFrequentes(int quantidade) throws SQLException {
         try (Connection conn = ConexaoFactory.getConexao()) {
             // Busca os N destinos mais frequentes
             List<Object[]> dadosBrutos = dao.buscarDadosDestinosFrequentes(conn, quantidade);
             
             // Transforma dados brutos em objetos de domínio
-            List<DestinoFrequente> destinos = new ArrayList<>();
+            List<DestinoFrequenteDTO> destinos = new ArrayList<>();
             for (Object[] dados : dadosBrutos) {
                 String nomeCidade = (String) dados[0];
                 String uf = (String) dados[1];
                 int quantidadeViagens = ((Number) dados[2]).intValue();
-                destinos.add(new DestinoFrequente(nomeCidade, uf, quantidadeViagens));
+                destinos.add(new DestinoFrequenteDTO(nomeCidade, uf, quantidadeViagens));
             }
             
             return destinos;
@@ -131,7 +131,7 @@ public class ServicoConsulta {
     /**
      * Busca os 10 destinos mais frequentes (método de conveniência).
      */
-    public List<DestinoFrequente> buscarTop10DestinosFrequentes() throws SQLException {
+    public List<DestinoFrequenteDTO> buscarTop10DestinosFrequentes() throws SQLException {
         return buscarDestinosFrequentes(10);
     }
 }

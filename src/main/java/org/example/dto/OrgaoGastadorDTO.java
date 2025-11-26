@@ -4,11 +4,11 @@ package org.example.dto;
  * DTO (Data Transfer Object) para representar um órgão com seu valor total gasto.
  * Usado para relatórios de maiores gastadores.
  */
-public class OrgaoGastador {
+public class OrgaoGastadorDTO {
     private String nomeOrgao;
     private double valorTotal;
 
-    public OrgaoGastador(String nomeOrgao, double valorTotal) {
+    public OrgaoGastadorDTO(String nomeOrgao, double valorTotal) {
         this.nomeOrgao = nomeOrgao;
         this.valorTotal = valorTotal;
     }

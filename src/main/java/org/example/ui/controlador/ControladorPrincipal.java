@@ -1,5 +1,7 @@
 package org.example.ui.controlador;
 
+import org.example.dto.DestinoFrequenteDTO;
+import org.example.dto.OrgaoGastadorDTO;
 import org.example.service.ServicoConsulta;
 import org.example.service.ServicoImportacao;
 import org.example.model.DestinoFrequente;
@@ -97,7 +99,7 @@ public class ControladorPrincipal {
     /**
      * Busca maiores gastadores de forma assíncrona.
      */
-    public CompletableFuture<List<OrgaoGastador>> buscarMaioresGastadores(int quantidade) {
+    public CompletableFuture<List<OrgaoGastadorDTO>> buscarMaioresGastadores(int quantidade) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarMaioresGastadores(quantidade);
@@ -110,7 +112,7 @@ public class ControladorPrincipal {
     /**
      * Busca top 5 maiores gastadores de forma assíncrona.
      */
-    public CompletableFuture<List<OrgaoGastador>> buscarTop5MaioresGastadores() {
+    public CompletableFuture<List<OrgaoGastadorDTO>> buscarTop5MaioresGastadores() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarTop5MaioresGastadores();
@@ -123,7 +125,7 @@ public class ControladorPrincipal {
     /**
      * Busca destinos frequentes de forma assíncrona.
      */
-    public CompletableFuture<List<DestinoFrequente>> buscarDestinosFrequentes(int quantidade) {
+    public CompletableFuture<List<DestinoFrequenteDTO>> buscarDestinosFrequentes(int quantidade) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarDestinosFrequentes(quantidade);
@@ -136,7 +138,7 @@ public class ControladorPrincipal {
     /**
      * Busca top 10 destinos frequentes de forma assíncrona.
      */
-    public CompletableFuture<List<DestinoFrequente>> buscarTop10DestinosFrequentes() {
+    public CompletableFuture<List<DestinoFrequenteDTO>> buscarTop10DestinosFrequentes() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return servicoConsulta.buscarTop10DestinosFrequentes();
