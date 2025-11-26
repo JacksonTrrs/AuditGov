@@ -2,8 +2,8 @@ package org.example.service;
 
 import org.example.database.ConexaoFactory;
 import org.example.database.DadosDAO;
-import org.example.model.DestinoFrequente;
-import org.example.model.OrgaoGastador;
+import org.example.dto.DestinoFrequente;
+import org.example.dto.OrgaoGastador;
 import org.example.model.Viagem;
 
 import java.sql.Connection;
