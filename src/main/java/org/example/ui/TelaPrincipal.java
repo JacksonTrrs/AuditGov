@@ -1,9 +1,9 @@
 package org.example.ui;
 
-import org.example.model.DestinoFrequente;
-import org.example.model.OrgaoGastador;
+import org.example.dto.DestinoFrequente;
+import org.example.dto.OrgaoGastador;
 import org.example.model.Viagem;
-import org.example.ui.controlador.ControladorPrincipal;
+import org.example.ui.controller.ControllerPrincipal;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 public class TelaPrincipal extends JFrame {
 
-    private final ControladorPrincipal controlador;
+    private final ControllerPrincipal controlador;
     private JTable tabelaViagens;
     private DefaultTableModel modeloTabela;
     private JProgressBar progressBar;
@@ -43,7 +43,7 @@ public class TelaPrincipal extends JFrame {
     private int paginaAtual = 0;
 
     public TelaPrincipal() {
-        this.controlador = new ControladorPrincipal();
+        this.controlador = new ControllerPrincipal();
         this.fileChooser = new JFileChooser();
         
         configurarJanela();
