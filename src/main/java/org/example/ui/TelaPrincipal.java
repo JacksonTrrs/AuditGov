@@ -124,7 +124,14 @@ public class TelaPrincipal extends JFrame {
         
         btnAtualizar = new JButton("Atualizar Lista");
         btnAtualizar.setPreferredSize(new Dimension(150, 35));
-        
+
+        JButton btnApagar = new JButton("Apagar viagens da tela");
+        btnApagar.setPreferredSize(new Dimension(150,35));
+        btnApagar.addActionListener(e -> {
+            DefaultTableModel model = (DefaultTableModel) tabelaViagens.getModel();
+            model.setRowCount(0); 
+        });
+
         btnEstatisticas = new JButton("Atualizar Estatísticas");
         btnEstatisticas.setPreferredSize(new Dimension(180, 35));
         
@@ -139,6 +146,7 @@ public class TelaPrincipal extends JFrame {
         painelBotoes.add(btnEstatisticas);
         painelBotoes.add(btnRelatorioGastadores);
         painelBotoes.add(btnRelatorioDestinos);
+        painelBotoes.add(btnApagar);
         
         // Barra de progresso
         progressBar = new JProgressBar(0, 100);
